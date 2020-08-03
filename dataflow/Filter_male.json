@@ -1,0 +1,41 @@
+{
+	"name": "Filter_male",
+	"properties": {
+		"description": "Excelから読み込んでSex='male'だけフィルタしてSinkに書き込む",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"schemaLinkedService": {
+						"referenceName": "AzureDataLakeStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Filter1"
+				},
+				{
+					"name": "MapDrifted1",
+					"description": "Creates an explicit mapping for each drifted column"
+				}
+			],
+			"script": "source(output(\n\t\tPassengerId as double,\n\t\tSurvived as double,\n\t\tPclass as double,\n\t\tName as string,\n\t\tSex as string,\n\t\tAge as double,\n\t\tSibSp as double,\n\t\tParch as double,\n\t\tTicket as string,\n\t\tFare as double,\n\t\tCabin as string,\n\t\tEmbarked as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tformat: 'excel',\n\tfileSystem: 'blob',\n\tsheetName: 'titanic',\n\tfirstRowAsHeader: true,\n\tpreferredIntegralType: 'integer',\n\tpreferredFractionalType: 'double',\n\twildcardPaths:['input/excel/*.xlsx']) ~> source1\nMapDrifted1 filter(Sex == 'male') ~> Filter1\nsource1 derive(PassengerId = toString(byName('PassengerId')),\n\t\tSurvived = toString(byName('Survived')),\n\t\tPclass = toString(byName('Pclass')),\n\t\tName = toString(byName('Name')),\n\t\tSex = toString(byName('Sex')),\n\t\tAge = toString(byName('Age')),\n\t\tSibSp = toString(byName('SibSp')),\n\t\tParch = toString(byName('Parch')),\n\t\tTicket = toString(byName('Ticket')),\n\t\tFare = toString(byName('Fare')),\n\t\tCabin = toString(byName('Cabin')),\n\t\tEmbarked = toString(byName('Embarked'))) ~> MapDrifted1\nFilter1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'blob',\n\tfolderPath: 'output',\n\ttruncate: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+		}
+	}
+}

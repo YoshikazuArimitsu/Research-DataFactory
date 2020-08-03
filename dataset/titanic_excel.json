@@ -1,0 +1,25 @@
+{
+	"name": "titanic_excel",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "excel"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "titanic",
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "titanic2.xlsx",
+				"folderPath": "input/excel",
+				"fileSystem": "blob"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": []
+	}
+}
