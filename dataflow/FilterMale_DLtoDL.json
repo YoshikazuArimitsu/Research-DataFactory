@@ -1,5 +1,5 @@
 {
-	"name": "Filter_male",
+	"name": "FilterMale_DLtoDL",
 	"properties": {
 		"description": "Excelから読み込んでSex='male'だけフィルタしてSinkに書き込む",
 		"type": "MappingDataFlow",
