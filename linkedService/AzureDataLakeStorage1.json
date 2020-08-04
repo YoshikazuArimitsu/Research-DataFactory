@@ -6,6 +6,6 @@
 		"typeProperties": {
 			"url": "https://aridfteststorage.dfs.core.windows.net"
 		},
-		"description": "aridfteststorage"
+		"description": "テスト用Azure Data Lake"
 	}
 }
