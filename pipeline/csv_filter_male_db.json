@@ -40,6 +40,9 @@
 				"typeProperties": {
 					"url": " https://hooks.slack.com/services/T028MRBMM/B01811CHDFZ/IUlVOxuO4ZznC8cRtgbMeZ",
 					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
 					"body": {
 						"text": "動きました",
 						"channel": "@yoshikazu_arimitsu"
