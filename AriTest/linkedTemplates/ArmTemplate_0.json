@@ -330,13 +330,17 @@
 						],
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://hooks.slack.com/services/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",
+							"url": "https://hooks.slack.com/services/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",
 							"method": "POST",
-							"headers": {},
+							"headers": {
+								"Content-Type": "application/json"
+							},
 							"body": {
+								"channel": "@yoshikazu_arimitsu",
 								"text": "動きました"
 							},
-							"timeout": "00:10:00"
+							"timeout": "00:10:00",
+							"reportStatusOnCallBack": true
 						}
 					}
 				],
