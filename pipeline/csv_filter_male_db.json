@@ -26,7 +26,7 @@
 				}
 			},
 			{
-				"name": "WebHook_slack",
+				"name": "WebHook_teams",
 				"type": "WebHook",
 				"dependsOn": [
 					{
@@ -44,7 +44,7 @@
 						"text": "動きました"
 					},
 					"timeout": "00:10:00",
-					"reportStatusOnCallBack": true
+					"reportStatusOnCallBack": false
 				}
 			}
 		],
