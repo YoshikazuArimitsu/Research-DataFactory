@@ -43,7 +43,9 @@
 					"headers": {
 						"Content-Type": "application/json"
 					},
-					"body": "{\ntext:\"ugokimashita\"\n}",
+					"body": {
+						"text": "ugokimashita"
+					},
 					"timeout": "00:10:00",
 					"reportStatusOnCallBack": true
 				}
