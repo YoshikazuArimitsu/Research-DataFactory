@@ -44,8 +44,7 @@
 						"Content-Type": "application/json"
 					},
 					"body": {
-						"text": "動きました",
-						"channel": "@yoshikazu_arimitsu"
+						"text": "動きました"
 					},
 					"timeout": "00:10:00"
 				}
