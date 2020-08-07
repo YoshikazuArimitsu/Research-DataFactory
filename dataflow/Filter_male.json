@@ -15,13 +15,9 @@
 			],
 			"sinks": [
 				{
-					"linkedService": {
-						"referenceName": "AzureDataLakeStorage1",
-						"type": "LinkedServiceReference"
-					},
-					"schemaLinkedService": {
-						"referenceName": "AzureDataLakeStorage1",
-						"type": "LinkedServiceReference"
+					"dataset": {
+						"referenceName": "titanic",
+						"type": "DatasetReference"
 					},
 					"name": "sink1"
 				}
@@ -35,7 +31,7 @@
 					"description": "Creates an explicit mapping for each drifted column"
 				}
 			],
-			"script": "source(output(\n\t\tPassengerId as double,\n\t\tSurvived as double,\n\t\tPclass as double,\n\t\tName as string,\n\t\tSex as string,\n\t\tAge as double,\n\t\tSibSp as double,\n\t\tParch as double,\n\t\tTicket as string,\n\t\tFare as double,\n\t\tCabin as string,\n\t\tEmbarked as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tformat: 'excel',\n\tfileSystem: 'blob',\n\tsheetName: 'titanic',\n\tfirstRowAsHeader: true,\n\tpreferredIntegralType: 'integer',\n\tpreferredFractionalType: 'double',\n\twildcardPaths:['input/excel/*.xlsx']) ~> source1\nMapDrifted1 filter(Sex == 'male') ~> Filter1\nsource1 derive(PassengerId = toString(byName('PassengerId')),\n\t\tSurvived = toString(byName('Survived')),\n\t\tPclass = toString(byName('Pclass')),\n\t\tName = toString(byName('Name')),\n\t\tSex = toString(byName('Sex')),\n\t\tAge = toString(byName('Age')),\n\t\tSibSp = toString(byName('SibSp')),\n\t\tParch = toString(byName('Parch')),\n\t\tTicket = toString(byName('Ticket')),\n\t\tFare = toString(byName('Fare')),\n\t\tCabin = toString(byName('Cabin')),\n\t\tEmbarked = toString(byName('Embarked'))) ~> MapDrifted1\nFilter1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'blob',\n\tfolderPath: 'output',\n\ttruncate: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+			"script": "source(output(\n\t\tPassengerId as double,\n\t\tSurvived as double,\n\t\tPclass as double,\n\t\tName as string,\n\t\tSex as string,\n\t\tAge as double,\n\t\tSibSp as double,\n\t\tParch as double,\n\t\tTicket as string,\n\t\tFare as double,\n\t\tCabin as string,\n\t\tEmbarked as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tformat: 'excel',\n\tfileSystem: 'blob',\n\tsheetName: 'titanic',\n\tfirstRowAsHeader: true,\n\tpreferredIntegralType: 'integer',\n\tpreferredFractionalType: 'double',\n\twildcardPaths:['input/excel/*.xlsx']) ~> source1\nMapDrifted1 filter(Sex == 'male') ~> Filter1\nsource1 derive(PassengerId = toInteger(byName('PassengerId')),\n\t\tSurvived = toInteger(byName('Survived')),\n\t\tPclass = toInteger(byName('Pclass')),\n\t\tName = toString(byName('Name')),\n\t\tSex = toString(byName('Sex')),\n\t\tAge = toInteger(byName('Age')),\n\t\tSibSp = toInteger(byName('SibSp')),\n\t\tParch = toInteger(byName('Parch')),\n\t\tTicket = toString(byName('Ticket')),\n\t\tFare = toString(byName('Fare')),\n\t\tCabin = toString(byName('Cabin')),\n\t\tEmbarked = toString(byName('Embarked'))) ~> MapDrifted1\nFilter1 sink(input(\n\t\tpassengerid as integer,\n\t\tsurvived as integer,\n\t\tpclass as integer,\n\t\tname as string,\n\t\tsex as string,\n\t\tage as integer,\n\t\tsibsp as integer,\n\t\tparch as integer,\n\t\tticket as string,\n\t\tfare as double,\n\t\tcabin as string,\n\t\tembarked as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate:true,\n\tformat: 'table',\n\tmapColumn(\n\t\tpassengerid = PassengerId,\n\t\tsurvived = Survived,\n\t\tpclass = Pclass,\n\t\tname = Name,\n\t\tsex = Sex,\n\t\tage = Age,\n\t\tsibsp = SibSp,\n\t\tparch = Parch,\n\t\tticket = Ticket,\n\t\tfare = Fare,\n\t\tcabin = Cabin,\n\t\tembarked = Embarked\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
 		}
 	}
 }
