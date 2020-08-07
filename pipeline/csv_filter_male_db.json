@@ -38,7 +38,7 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://hooks.slack.com/services/T028MRBMM/B01811CHDFZ/IUlVOxuO4ZznC8cRtgbMeZ",
+					"url": "https://hooks.slack.com/services/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",
 					"method": "POST",
 					"headers": {
 						"Content-Type": "application/json"
