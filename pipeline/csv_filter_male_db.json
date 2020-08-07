@@ -38,10 +38,11 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://hooks.slack.com/services/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",
+					"url": " https://hooks.slack.com/services/T028MRBMM/B01811CHDFZ/IUlVOxuO4ZznC8cRtgbMeZ",
 					"method": "POST",
 					"body": {
-						"text": "動きました"
+						"text": "動きました",
+						"channel": "@yoshikazu_arimitsu"
 					},
 					"timeout": "00:10:00"
 				}
