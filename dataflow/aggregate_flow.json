@@ -1,0 +1,24 @@
+{
+	"name": "aggregate_flow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "titanic",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "Aggregate1"
+				}
+			],
+			"script": "source(output(\n\t\tpassengerid as integer,\n\t\tsurvived as integer,\n\t\tpclass as integer,\n\t\tname as string,\n\t\tsex as string,\n\t\tage as integer,\n\t\tsibsp as integer,\n\t\tparch as integer,\n\t\tticket as string,\n\t\tfare as double,\n\t\tcabin as string,\n\t\tembarked as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> source1\nsource1 aggregate(groupBy(survived),\n\tcount = count()) ~> Aggregate1"
+		}
+	}
+}
