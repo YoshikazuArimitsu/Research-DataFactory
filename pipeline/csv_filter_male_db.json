@@ -44,7 +44,7 @@
 						"Content-Type": "application/json"
 					},
 					"body": {
-						"text": "動きました"
+						"text": "ugokimashita"
 					},
 					"timeout": "00:10:00",
 					"reportStatusOnCallBack": true
