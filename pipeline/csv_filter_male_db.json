@@ -38,11 +38,8 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://hooks.slack.com/services/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",
+					"url": "https://hooks.slack.com/services/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",
 					"method": "POST",
-					"headers": {
-						"Content-Type": "application/json"
-					},
 					"body": {
 						"text": "動きました"
 					},
