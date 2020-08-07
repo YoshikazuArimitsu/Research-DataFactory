@@ -38,13 +38,14 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://hooks.slack.com/services/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",
+					"url": "https://hooks.slack.com/services/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",
 					"method": "POST",
 					"headers": {
 						"Content-Type": "application/json"
 					},
 					"body": {
-						"text": "ugokimashita"
+						"channel": "@yoshikazu_arimitsu",
+						"text": "動きました"
 					},
 					"timeout": "00:10:00",
 					"reportStatusOnCallBack": true
