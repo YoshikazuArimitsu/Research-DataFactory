@@ -1,0 +1,319 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "AriTest"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/csv_filter_male_db')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Filter_male",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Filter_male",
+								"type": "DataFlowReference"
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							}
+						}
+					},
+					{
+						"name": "WebHook_slack",
+						"type": "WebHook",
+						"dependsOn": [
+							{
+								"activity": "Filter_male",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://hooks.slack.com/services/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",
+							"method": "POST",
+							"body": {
+								"text": "動きました"
+							},
+							"timeout": "00:10:00"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Filter_male')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/titanic')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "sqldb"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "passengerid",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "survived",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "pclass",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "sex",
+						"type": "nvarchar"
+					},
+					{
+						"name": "age",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "sibsp",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "parch",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ticket",
+						"type": "nvarchar"
+					},
+					{
+						"name": "fare",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "cabin",
+						"type": "nvarchar"
+					},
+					{
+						"name": "embarked",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "titanic"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/titanic_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "csv"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "train.csv",
+						"folderPath": "input/csv",
+						"fileSystem": "blob"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "PassengerId",
+						"type": "String"
+					},
+					{
+						"name": "Survived",
+						"type": "String"
+					},
+					{
+						"name": "Pclass",
+						"type": "String"
+					},
+					{
+						"name": "Name",
+						"type": "String"
+					},
+					{
+						"name": "Sex",
+						"type": "String"
+					},
+					{
+						"name": "Age",
+						"type": "String"
+					},
+					{
+						"name": "SibSp",
+						"type": "String"
+					},
+					{
+						"name": "Parch",
+						"type": "String"
+					},
+					{
+						"name": "Ticket",
+						"type": "String"
+					},
+					{
+						"name": "Fare",
+						"type": "String"
+					},
+					{
+						"name": "Cabin",
+						"type": "String"
+					},
+					{
+						"name": "Embarked",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/titanic_excel')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "excel"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "titanic",
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "titanic2.xlsx",
+						"folderPath": "input/excel",
+						"fileSystem": "blob"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "aridfteststorage",
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "https://aridfteststorage.dfs.core.windows.net"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Filter_male')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Excelから読み込んでSex='male'だけフィルタしてSinkに書き込む",
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "AzureDataLakeStorage1",
+								"type": "LinkedServiceReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "titanic",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Filter1"
+						},
+						{
+							"name": "MapDrifted1",
+							"description": "Creates an explicit mapping for each drifted column"
+						}
+					],
+					"script": "source(output(\n\t\tPassengerId as double,\n\t\tSurvived as double,\n\t\tPclass as double,\n\t\tName as string,\n\t\tSex as string,\n\t\tAge as double,\n\t\tSibSp as double,\n\t\tParch as double,\n\t\tTicket as string,\n\t\tFare as double,\n\t\tCabin as string,\n\t\tEmbarked as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tformat: 'excel',\n\tfileSystem: 'blob',\n\tsheetName: 'titanic',\n\tfirstRowAsHeader: true,\n\tpreferredIntegralType: 'integer',\n\tpreferredFractionalType: 'double',\n\twildcardPaths:['input/excel/*.xlsx']) ~> source1\nMapDrifted1 filter(Sex == 'male') ~> Filter1\nsource1 derive(PassengerId = toInteger(byName('PassengerId')),\n\t\tSurvived = toInteger(byName('Survived')),\n\t\tPclass = toInteger(byName('Pclass')),\n\t\tName = toString(byName('Name')),\n\t\tSex = toString(byName('Sex')),\n\t\tAge = toInteger(byName('Age')),\n\t\tSibSp = toInteger(byName('SibSp')),\n\t\tParch = toInteger(byName('Parch')),\n\t\tTicket = toString(byName('Ticket')),\n\t\tFare = toString(byName('Fare')),\n\t\tCabin = toString(byName('Cabin')),\n\t\tEmbarked = toString(byName('Embarked'))) ~> MapDrifted1\nFilter1 sink(input(\n\t\tpassengerid as integer,\n\t\tsurvived as integer,\n\t\tpclass as integer,\n\t\tname as string,\n\t\tsex as string,\n\t\tage as integer,\n\t\tsibsp as integer,\n\t\tparch as integer,\n\t\tticket as string,\n\t\tfare as double,\n\t\tcabin as string,\n\t\tembarked as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate:true,\n\tformat: 'table',\n\tmapColumn(\n\t\tpassengerid = PassengerId,\n\t\tsurvived = Survived,\n\t\tpclass = Pclass,\n\t\tname = Name,\n\t\tsex = Sex,\n\t\tage = Age,\n\t\tsibsp = SibSp,\n\t\tparch = Parch,\n\t\tticket = Ticket,\n\t\tfare = Fare,\n\t\tcabin = Cabin,\n\t\tembarked = Embarked\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]",
+				"[concat(variables('factoryId'), '/datasets/titanic')]"
+			]
+		}
+	]
+}
