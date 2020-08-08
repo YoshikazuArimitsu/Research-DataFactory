@@ -1,0 +1,22 @@
+{
+	"name": "output_json",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "json"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "titanic.json",
+				"folderPath": "output",
+				"fileSystem": "blob"
+			}
+		}
+	}
+}
