@@ -1,3 +1,3 @@
 # Research-DataFactory
-# Research-DataFactory
-# Research-DataFactory
+
+DataFactory調査用リポジトリ
