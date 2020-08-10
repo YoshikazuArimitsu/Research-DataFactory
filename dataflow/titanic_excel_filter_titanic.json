@@ -1,7 +1,7 @@
 {
-	"name": "Filter_male",
+	"name": "titanic_excel_filter_titanic",
 	"properties": {
-		"description": "Excelから読み込んでSex='male'だけフィルタしてSinkに書き込む",
+		"description": "Excelから読み込んでSex='male'だけフィルタしてDB(titanic)に書き込むフロー",
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [

@@ -1,0 +1,111 @@
+{
+	"name": "sample_pipeline",
+	"properties": {
+		"description": "1. titanic_excelからデータを読み、フィルタしてtitanicにコピーするフロー\n2.titanicからデータを読み、集計結果をtitanic_aggに書き込むフロー\n3. 1,2 の処理結果に応じて teams に結果を投稿するアクティビティ\n\nのパイプライン",
+		"activities": [
+			{
+				"name": "Filter_male",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "titanic_excel_filter_titanic",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					}
+				}
+			},
+			{
+				"name": "WebHook_teams_success",
+				"type": "WebHook",
+				"dependsOn": [
+					{
+						"activity": "aggregate_flow",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://outlook.office.com/webhook/89a07b19-201a-444b-97a6-c6d66ff5f70f@097ada54-1f48-459c-ad7b-f6cd72a2a998/IncomingWebhook/f37062d933f24c61b086bcd2f9796f51/6c579d5d-ee40-4ef3-87b6-4137f4fd4eb2",
+					"method": "POST",
+					"body": {
+						"text": "動きました"
+					},
+					"timeout": "00:10:00",
+					"reportStatusOnCallBack": true
+				}
+			},
+			{
+				"name": "aggregate_flow",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Filter_male",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "titanic_aggregate_titanic_agg1",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					}
+				}
+			},
+			{
+				"name": "WebHook_teams_failure",
+				"type": "WebHook",
+				"dependsOn": [
+					{
+						"activity": "Filter_male",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "aggregate_flow",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://outlook.office.com/webhook/89a07b19-201a-444b-97a6-c6d66ff5f70f@097ada54-1f48-459c-ad7b-f6cd72a2a998/IncomingWebhook/f37062d933f24c61b086bcd2f9796f51/6c579d5d-ee40-4ef3-87b6-4137f4fd4eb2",
+					"method": "POST",
+					"body": {
+						"text": "失敗しました"
+					},
+					"timeout": "00:10:00"
+				}
+			}
+		],
+		"annotations": []
+	}
+}
