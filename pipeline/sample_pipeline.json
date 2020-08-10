@@ -4,7 +4,7 @@
 		"description": "1. titanic_excelからデータを読み、フィルタしてtitanicにコピーするフロー\n2.titanicからデータを読み、集計結果をtitanic_aggに書き込むフロー\n3. 1,2 の処理結果に応じて teams に結果を投稿するアクティビティ\n\nのパイプライン",
 		"activities": [
 			{
-				"name": "Filter_male",
+				"name": "titanic_exec_filter_titanic",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -31,7 +31,7 @@
 				"type": "WebHook",
 				"dependsOn": [
 					{
-						"activity": "aggregate_flow",
+						"activity": "titanic_aggregate_titanic_agg1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -49,11 +49,11 @@
 				}
 			},
 			{
-				"name": "aggregate_flow",
+				"name": "titanic_aggregate_titanic_agg1",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "Filter_male",
+						"activity": "titanic_exec_filter_titanic",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -83,13 +83,13 @@
 				"type": "WebHook",
 				"dependsOn": [
 					{
-						"activity": "Filter_male",
+						"activity": "titanic_exec_filter_titanic",
 						"dependencyConditions": [
 							"Failed"
 						]
 					},
 					{
-						"activity": "aggregate_flow",
+						"activity": "titanic_aggregate_titanic_agg1",
 						"dependencyConditions": [
 							"Failed"
 						]
